@@ -3,26 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LinkBoard - Signup</title>
-  <link rel="stylesheet" href="/style.css" />
+  <title>LinkBoard - Sign Up</title>
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-  <div class="auth-container">
-    <div class="auth-box">
-      <h1 class="app-name">LinkBoard</h1>
-
-      <div class="auth-form-container">
-        <form action="/signup" method="POST" class="auth-form">
-          <input type="email" name="email" placeholder="Email" required />
-          <input type="password" name="password" placeholder="Password" required />
-          <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
-          <button type="submit" class="auth-button">Sign Up</button>
-        </form>
-
+  <div class="container">
+    <h1 class="app-title">LinkBoard</h1>
+    <div class="login-box">
+      <h2>Sign Up</h2>
+      <form action="/signup" method="POST">
+        <input type="text" name="username" placeholder="Email Address" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
+        <button type="submit">Sign Up</button>
         <p class="switch-auth">
           Already have an account? <a href="/login">Login</a>
         </p>
-      </div>
+      </form>
     </div>
   </div>
 </body>
