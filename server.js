@@ -44,7 +44,7 @@ app.get('/login', (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = users.find(u => u.email === email);
-  
+
   if (user && await bcrypt.compare(password, user.password)) {
     req.session.user = email; // Store user info in session
     res.redirect('/');  // Redirect to home page
@@ -62,7 +62,7 @@ app.get('/signup', (req, res) => {
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
   const userExists = users.find(u => u.email === email);
-  
+
   if (userExists) {
     res.render('signup', { errorMessage: 'Email already exists. Please choose another one.' });
   } else {
@@ -81,11 +81,6 @@ app.get('/logout', (req, res) => {
     res.clearCookie('connect.sid');
     res.redirect('/login');
   });
-});
-
-// Route for Chatbot (Chat interaction)
-app.get('/chatbot', isAuthenticated, (req, res) => {
-  res.render('chatbot', { email: req.session.user });
 });
 
 // Chatbot response route (Simple rule-based chatbot)
