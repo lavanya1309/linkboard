@@ -65,7 +65,7 @@ app.post('/signup', async (req, res) => {
   
   users.push({ email, password: hashedPassword }); // Store the user in the "database"
   
-  res.send('User registered successfully. <a href="/login">Login</a>');
+  res.redirect('/login');  // Redirect to login page after successful signup
 });
 
 // Route for Logout
