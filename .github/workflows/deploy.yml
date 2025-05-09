@@ -67,5 +67,11 @@ jobs:
           cd /opt/linkboard
           sudo apt update
           sudo apt install -y python3-pip nodejs npm unzip
+
+          # restart the systemctl
+          sudo systemctl daemon-reload
+          sudo systemctl restart linkboard
+          sudo systemctl status linkboard
+
           
         EOF
