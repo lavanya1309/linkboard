@@ -1,9 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid');
 const http = require('http');
-
+const { v4: uuidv4 } = require('uuid');
 const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
@@ -29,7 +28,6 @@ function isAuthenticated(req, res, next) {
 }
 
 // Routes
-
 app.get('/', isAuthenticated, (req, res) => {
   res.render('index');
 });
@@ -39,13 +37,13 @@ app.get('/signup', (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
-  const exists = users.find(u => u.username === username);
+  const { email, password } = req.body;
+  const exists = users.find(u => u.email === email);
   if (exists) {
     return res.send('User already exists. Please <a href="/login">login</a>.');
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  users.push({ username, password: hashedPassword });
+  users.push({ email, password: hashedPassword });
   res.redirect('/login');
 });
 
@@ -54,13 +52,13 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(u => u.username === username);
+  const { email, password } = req.body;
+  const user = users.find(u => u.email === email);
   if (user && await bcrypt.compare(password, user.password)) {
-    req.session.user = username;
+    req.session.user = email; // Store email in session
     res.redirect('/');
   } else {
-    res.send('Invalid username or password');
+    res.send('Invalid email or password. Please <a href="/login">try again</a>.');
   }
 });
 
@@ -74,7 +72,7 @@ app.get('/room/:roomId', isAuthenticated, (req, res) => {
   res.render('room', { roomId: req.params.roomId });
 });
 
-// Socket.IO logic (if needed)
+// Socket.IO logic (for real-time communication)
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
     socket.join(roomId);
@@ -86,8 +84,6 @@ io.on('connection', socket => {
   });
 });
 
-
 server.listen(3000, '0.0.0.0', () => {
   console.log('Server is running on http://0.0.0.0:3000');
 });
-
