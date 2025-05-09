@@ -1,12 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>LinkBoard Room</title>
+  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    video {
+      width: 300px;
+      margin: 10px;
+      border: 2px solid #1d2671;
+      border-radius: 10px;
+    }
+    body {
+      background: #f4f4f4;
+      text-align: center;
+      font-family: sans-serif;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welcome to Room: <%= roomId %></h1>
-  <!-- Video and controls will come here in next phase -->
+  <h1>LinkBoard Room: <%= roomId %></h1>
+  <div id="video-grid"></div>
+
+  <script>
+    const socket = io('/');
+    const videoGrid = document.getElementById('video-grid');
+    const myVideo = document.createElement('video');
+    myVideo.muted = true;
+
+    const peer = new Peer(undefined, {
+      host: '/',
+      port: '3001' // PeerJS server runs separately
+    });
+
+    navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    }).then(stream => {
+      addVideoStream(myVideo, stream);
+
+      peer.on('call', call => {
+        call.answer(stream);
+        const video = document.createElement('video');
+        call.on('stream', userVideoStream => {
+          addVideoStream(video, userVideoStream);
+        });
+      });
+
+      socket.on('user-connected', userId => {
+        const call = peer.call(userId, stream);
+        const video = document.createElement('video');
+        call.on('stream', userVideoStream => {
+          addVideoStream(video, userVideoStream);
+        });
+      });
+    });
+
+    peer.on('open', id => {
+      socket.emit('join-room', '<%= roomId %>', id);
+    });
+
+    function addVideoStream(video, stream) {
+      video.srcObject = stream;
+      video.addEventListener('loadedmetadata', () => {
+        video.play();
+      });
+      videoGrid.append(video);
+    }
+  </script>
 </body>
 </html>
-
