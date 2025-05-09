@@ -5,44 +5,29 @@
   <title>LinkBoard Room</title>
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <style>
-    #video-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
-    video {
-      width: 300px;
-      margin: 10px;
-      border: 2px solid #1d2671;
-      border-radius: 10px;
-    }
-    body {
-      background: #f4f4f4;
-      text-align: center;
-      font-family: sans-serif;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 20px;
-      background-color: #1d2671;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #2e3c8a;
-    }
-  </style>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <h1>LinkBoard Room: <%= roomId %></h1>
+  <div class="room-header">
+    <h1>Welcome to LinkBoard</h1>
+    <div class="user-actions">
+      <a href="/home">Home</a>
+      <a href="/profile">Profile</a>
+      <a href="/settings">Account Settings</a>
+    </div>
+  </div>
+
+  <h2>Room: <%= roomId %></h2>
+  
   <div id="video-grid"></div>
-  <button id="end-call">End Call</button>
+
+  <div class="meeting-actions">
+    <button id="createMeeting" class="action-button">Create Meeting</button>
+    <button id="joinMeeting" class="action-button">Join Meeting</button>
+  </div>
 
   <script>
+    // Room logic and video communication
     const socket = io('/');
     const videoGrid = document.getElementById('video-grid');
     const myVideo = document.createElement('video');
@@ -50,8 +35,7 @@
 
     const peer = new Peer(undefined, {
       host: '/',
-      port: '3001',
-      path: '/peerjs'
+      port: '3001'
     });
 
     navigator.mediaDevices.getUserMedia({
@@ -75,23 +59,10 @@
           addVideoStream(video, userVideoStream);
         });
       });
-
-      socket.on('user-disconnected', userId => {
-        const videoElement = document.getElementById(userId);
-        if (videoElement) {
-          videoElement.remove();
-        }
-      });
     });
 
     peer.on('open', id => {
       socket.emit('join-room', '<%= roomId %>', id);
-    });
-
-    document.getElementById('end-call').addEventListener('click', () => {
-      peer.destroy(); // Close the PeerJS connection
-      socket.emit('leave-room', '<%= roomId %>'); // Emit an event to notify the server
-      window.location.href = '/'; // Redirect to home page or another screen
     });
 
     function addVideoStream(video, stream) {
