@@ -1,81 +1,72 @@
-/* General reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #f7f7f7;
+  background: #f0f2f5;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 100vh;
+  justify-content: center;
+  min-height: 100vh;
 }
 
-/* Container to center the form */
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+.app-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-/* The actual form box */
-.auth-box {
-  background-color: white;
-  padding: 30px 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 350px;
+.container {
   text-align: center;
 }
 
-.app-name {
-  font-size: 32px;
+.login-box {
+  background-color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  text-align: left;
+}
+
+.login-box h2 {
+  text-align: center;
   margin-bottom: 20px;
-  font-weight: bold;
 }
 
-.auth-form-container {
-  margin-top: 20px;
-}
-
-.auth-form input {
+.login-box input {
   width: 100%;
   padding: 10px;
-  margin: 10px 0;
+  margin-bottom: 15px;
+  border-radius: 5px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.auth-form button {
-  width: 100%;
-  padding: 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.auth-form button:hover {
-  background-color: #0056b3;
-}
-
-.forgot-password {
-  margin: 10px 0;
   font-size: 14px;
 }
 
-.forgot-password a {
-  color: #007bff;
-  text-decoration: none;
+.login-box .options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 15px;
 }
 
-.forgot-password a:hover {
-  text-decoration: underline;
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  background-color: #0a66c2;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-box button:hover {
+  background-color: #004182;
+}
+
+.switch-auth {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
 }
