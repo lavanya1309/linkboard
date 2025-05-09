@@ -5,85 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - LinkBoard</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f0f4f8; /* Light background color */
-    }
-    .form-container {
-      background-color: #ffffff; /* White background for form container */
-      padding: 40px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      width: 350px;
-      border: 2px solid #007bff; /* Border for the container */
-    }
-    .app-name {
-      font-size: 32px;
-      text-align: center;
-      font-weight: bold;
-      color: #3498db; /* Application name color (blue) */
-      margin-bottom: 20px;
-    }
-    .form-container h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 24px;
-      color: #333333; /* Sign-in text color */
-    }
-    .form-container input {
-      width: 100%;
-      padding: 12px;
-      margin: 12px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-      outline: none; /* Removed outline */
-    }
-    .form-container input:focus {
-      border-color: #007bff; /* Highlight border color on focus */
-    }
-    .form-container button {
-      width: 100%;
-      padding: 12px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .form-container button:hover {
-      background-color: #0056b3;
-    }
-    .error-message {
-      color: #ff0000;
-      font-size: 14px;
-      text-align: center;
-      margin-top: 10px;
-    }
-    .app-name, .form-container h2, .form-container input, .form-container button {
-      transition: all 0.3s ease;
-    }
+    /* Your existing styles */
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <div class="app-name">LinkBoard</div>
-    <h2>Sign In</h2>
-    <form action="/login" method="POST">
-      <input type="text" name="email" placeholder="Email Address" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Sign In</button>
-    </form>
-    <% if (errorMessage) { %>
-      <div class="error-message"><%= errorMessage %></div>
-    <% } %>
-    <p>Don't have an account? <a href="/signup">Sign up</a></p>
-  </div>
+  <h1>Login to LinkBoard</h1>
+  
+  <form action="/login" method="POST">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Sign In</button>
+  </form>
+
+  <% if (errorMessage) { %>
+    <p style="color: red;"><%= errorMessage %></p>
+  <% } %>
+
+  <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+
+  <!-- Include the chatbot on the login page -->
+  <%- include('chatbot') %>
+
 </body>
 </html>
