@@ -1,0 +1,32 @@
+<div id="chatbox">
+  <div id="chat-area"></div>
+  <input type="text" id="user-input" placeholder="Type your message..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  // Function to send user message and get response
+  async function sendMessage() {
+    const userMessage = document.getElementById('user-input').value;
+    
+    if (userMessage.trim() === "") return; // Don't send empty messages
+    
+    // Display the user's message
+    document.getElementById('chat-area').innerHTML += `<div class="user-message">${userMessage}</div>`;
+
+    // Call the server-side endpoint for chatbot response
+    const response = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userMessage })
+    });
+    
+    const data = await response.json();
+    
+    // Display the bot's response
+    document.getElementById('chat-area').innerHTML += `<div class="bot-message">${data.response}</div>`;
+    
+    // Clear the input field
+    document.getElementById('user-input').value = '';
+  }
+</script>
