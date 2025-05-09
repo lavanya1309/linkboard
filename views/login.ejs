@@ -2,18 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>LinkBoard | Login</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkBoard - Login</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
-<body class="auth-page">
-  <div class="auth-container">
-    <h1>LinkBoard</h1>
-    <form action="/login" method="POST">
-      <input type="text" name="username" placeholder="Username" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-      <p>Don't have an account? <a href="/signup">Sign up</a></p>
-    </form>
+<body>
+  <div class="login-container">
+    <div class="login-left">
+      <img src="/images/login-image.jpg" alt="LinkBoard Image" class="login-image" />
+    </div>
+
+    <div class="login-right">
+      <h1 class="app-name">LinkBoard</h1>
+      <form action="/login" method="POST" class="login-form">
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit" class="login-button">Login</button>
+      </form>
+    </div>
   </div>
 </body>
 </html>
