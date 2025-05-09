@@ -64,6 +64,8 @@ jobs:
       run: |
         ssh -i private_key -o StrictHostKeyChecking=no soma@20.83.173.209 << 'EOF'
           cd /opt/linkboard
+          #permission
+          chmod -R 777 /opt/linkboard/
           sudo apt update
           sudo apt install -y python3-pip nodejs npm unzip
 
