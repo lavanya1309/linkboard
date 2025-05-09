@@ -13,6 +13,7 @@
       height: 100vh;
       margin: 0;
       background-color: #f0f4f8; /* Light background color */
+      position: relative;
     }
     .form-container {
       background-color: #ffffff; /* White background for form container */
@@ -21,7 +22,6 @@
       border-radius: 12px;
       width: 350px;
       border: 2px solid #007bff; /* Border for the container */
-      position: relative;
     }
     .app-name {
       font-size: 32px;
@@ -68,54 +68,82 @@
       margin-top: 10px;
     }
 
-    /* Chatbot Styles */
-    #chatbox {
+    /* Chatbot icon */
+    .chatbot-icon {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 300px;
+      width: 60px;
+      height: 60px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    .chatbot-icon:hover {
+      background-color: #0056b3;
+    }
+
+    /* Chatbot window */
+    .chatbot-container {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 350px;
       height: 400px;
       background-color: #fff;
-      border: 1px solid #ddd;
-      padding: 10px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
       border-radius: 8px;
-      display: flex;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: none;
       flex-direction: column;
-      justify-content: space-between;
     }
-    #chat-area {
+
+    .chatbot-header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .chatbot-messages {
       flex: 1;
+      padding: 10px;
       overflow-y: auto;
-      margin-bottom: 10px;
     }
-    #user-input {
-      width: 100%;
-      padding: 5px;
-      border-radius: 6px;
+
+    .chatbot-input {
+      padding: 10px;
+      border-top: 1px solid #ccc;
+      display: flex;
+    }
+
+    .chatbot-input input {
+      flex: 1;
+      padding: 8px;
       border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
     }
-    button.chat-button {
-      padding: 5px;
+
+    .chatbot-input button {
       background-color: #007bff;
       color: white;
       border: none;
       border-radius: 6px;
+      padding: 8px 12px;
+      margin-left: 10px;
       cursor: pointer;
     }
-    button.chat-button:hover {
+
+    .chatbot-input button:hover {
       background-color: #0056b3;
-    }
-    .user-message, .bot-message {
-      margin: 10px 0;
-    }
-    .user-message {
-      text-align: left;
-      color: #4CAF50;
-    }
-    .bot-message {
-      text-align: right;
-      color: #007bff;
     }
   </style>
 </head>
@@ -134,37 +162,55 @@
     <p>Don't have an account? <a href="/signup">Sign up</a></p>
   </div>
 
-  <!-- Chatbot UI -->
-  <div id="chatbox">
-    <div id="chat-area"></div>
-    <input type="text" id="user-input" placeholder="Type your message..." />
-    <button class="chat-button" onclick="sendMessage()">Send</button>
+  <!-- Chatbot icon -->
+  <div class="chatbot-icon" onclick="toggleChatbot()">
+    🤖
+  </div>
+
+  <!-- Chatbot window -->
+  <div id="chatbot" class="chatbot-container">
+    <div class="chatbot-header">Chatbot</div>
+    <div id="chatbot-messages" class="chatbot-messages"></div>
+    <div class="chatbot-input">
+      <input type="text" id="user-message" placeholder="Type a message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
   </div>
 
   <script>
-    // Function to send user message and get response
-    async function sendMessage() {
-      const userMessage = document.getElementById('user-input').value;
+    function toggleChatbot() {
+      const chatbot = document.getElementById("chatbot");
+      chatbot.style.display = (chatbot.style.display === "none" || chatbot.style.display === "") ? "flex" : "none";
+    }
 
+    function sendMessage() {
+      const userMessage = document.getElementById("user-message").value;
       if (userMessage.trim() === "") return; // Don't send empty messages
+      const messagesContainer = document.getElementById("chatbot-messages");
 
-      // Display the user's message
-      document.getElementById('chat-area').innerHTML += `<div class="user-message">${userMessage}</div>`;
+      // Add user's message
+      const userMessageDiv = document.createElement("div");
+      userMessageDiv.textContent = `You: ${userMessage}`;
+      messagesContainer.appendChild(userMessageDiv);
 
-      // Call the server-side endpoint for chatbot response
-      const response = await fetch('/chat', {
+      // Send the message to the server
+      fetch('/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Add bot's response
+        const botMessageDiv = document.createElement("div");
+        botMessageDiv.textContent = `Bot: ${data.response}`;
+        messagesContainer.appendChild(botMessageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
       });
 
-      const data = await response.json();
-
-      // Display the bot's response
-      document.getElementById('chat-area').innerHTML += `<div class="bot-message">${data.response}</div>`;
-
-      // Clear the input field
-      document.getElementById('user-input').value = '';
+      document.getElementById("user-message").value = ""; // Clear input field
     }
   </script>
 </body>
