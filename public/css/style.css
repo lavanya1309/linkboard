@@ -17,7 +17,7 @@ body {
   padding: 20px;
 }
 
-.login-container {
+.auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,7 +32,7 @@ body {
   width: 100%;
   max-width: 400px;
   text-align: center;
-  background-color: #f9f9f9; /* Light background for the login box */
+  background-color: #f9f9f9; /* Light background for the box */
 }
 
 .app-name {
