@@ -5,91 +5,77 @@
   box-sizing: border-box;
 }
 
-/* Body styles */
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f4f4f4;  /* Light background color */
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  padding: 20px;
 }
 
-/* Container for centering the form */
+/* Container to center the form */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   height: 100%;
 }
 
-/* Box for the form */
+/* The actual form box */
 .auth-box {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
+  width: 350px;
   text-align: center;
-  background-color: #f9f9f9; /* Light background for the box */
 }
 
-/* App name styles */
 .app-name {
-  font-size: 2.5rem;
-  color: #1d2671;  /* Dark color for the app name */
-  margin-bottom: 30px;
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
-/* Form container */
 .auth-form-container {
-  width: 100%;
-}
-
-/* Form fields styles */
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;  /* Increased gap between input fields */
+  margin-top: 20px;
 }
 
 .auth-form input {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
+  margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 16px;
 }
 
-/* Button styles */
-.auth-button {
+.auth-form button {
+  width: 100%;
   padding: 12px;
-  background-color: #1d2671;  /* Dark color for button */
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
+  font-size: 18px;
   cursor: pointer;
-  font-size: 1.1rem;
 }
 
-.auth-button:hover {
-  background-color: #3e4e99;  /* Darker shade on hover */
+.auth-form button:hover {
+  background-color: #0056b3;
 }
 
-/* Text below form */
-.switch-auth {
-  margin-top: 20px;
-  font-size: 1rem;
+.forgot-password {
+  margin: 10px 0;
+  font-size: 14px;
 }
 
-.switch-auth a {
-  color: #1d2671;  /* Link color */
+.forgot-password a {
+  color: #007bff;
   text-decoration: none;
 }
 
-.switch-auth a:hover {
-  text-decoration: underline;  /* Underline on hover */
+.forgot-password a:hover {
+  text-decoration: underline;
 }
