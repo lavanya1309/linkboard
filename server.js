@@ -36,7 +36,7 @@ app.get('/', isAuthenticated, (req, res) => {
 
 // Route for Login page
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', { errorMessage: null });
 });
 
 // Route for Login form submission
@@ -46,26 +46,29 @@ app.post('/login', async (req, res) => {
   
   if (user && await bcrypt.compare(password, user.password)) {
     req.session.user = email; // Store user info in session
-    console.log('Session created for:', req.session.user);  // Debugging line
     res.redirect('/');  // Redirect to home page
   } else {
-    res.send('Invalid email or password. Please <a href="/login">try again</a>.');
+    res.render('login', { errorMessage: 'Invalid email or password. Please try again.' });
   }
 });
 
 // Route for Signup page
 app.get('/signup', (req, res) => {
-  res.render('signup');
+  res.render('signup', { errorMessage: null });
 });
 
 // Route for Signup form submission
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);  // Hash the password
+  const userExists = users.find(u => u.email === email);
   
-  users.push({ email, password: hashedPassword }); // Store the user in the "database"
-  
-  res.redirect('/login');  // Redirect to login page after successful signup
+  if (userExists) {
+    res.render('signup', { errorMessage: 'Email already exists. Please choose another one.' });
+  } else {
+    const hashedPassword = await bcrypt.hash(password, 10);  // Hash the password
+    users.push({ email, password: hashedPassword }); // Store the user in the "database"
+    res.redirect('/login');  // Redirect to login page after successful signup
+  }
 });
 
 // Route for Logout
