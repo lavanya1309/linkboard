@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>LinkBoard | Home</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <meta charset="UTF-8" />
+  <title>LinkBoard - Create or Join Meeting</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>LinkBoard</h1>
-    <p>Seamless Video Collaboration</p>
-    <div class="btn-group">
-      <button onclick="createRoom()">Create Meeting</button>
-      <button onclick="joinMeeting()">Join Meeting</button>
-    </div>
-  </div>
+  <h1>Welcome to LinkBoard</h1>
+  <p>Enter a room ID to join a meeting or create a new meeting</p>
+  <button onclick="createMeeting()">Create Meeting</button>
+  <button onclick="joinMeeting()">Join Meeting</button>
 
-  <script src="/js/script.js"></script>
+  <script>
+    function createMeeting() {
+      const roomId = generateRoomId();
+      window.location.href = `/room/${roomId}`;
+    }
+
+    function joinMeeting() {
+      const roomId = prompt("Enter Room ID:");
+      if (roomId) {
+        window.location.href = `/room/${roomId}`;
+      }
+    }
+
+    function generateRoomId() {
+      return Math.random().toString(36).substr(2, 8); // Random 8-character room ID
+    }
+  </script>
 </body>
 </html>
