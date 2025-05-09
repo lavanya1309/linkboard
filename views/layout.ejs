@@ -1,0 +1,81 @@
+<!-- Chatbot UI -->
+<div id="chatbot-container">
+  <div id="chatbot-header">LinkBoard Assistant 🤖</div>
+  <div id="chatbot-body" class="chatbot-hidden">
+    <div id="chat-messages"></div>
+    <input type="text" id="chat-input" placeholder="Ask me anything..." />
+    <button id="send-btn">Send</button>
+  </div>
+</div>
+
+<style>
+  #chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    font-family: Arial, sans-serif;
+    z-index: 9999;
+  }
+  #chatbot-header {
+    background-color: #0078d4;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+  }
+  #chatbot-body {
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    padding: 10px;
+    display: none;
+    border-radius: 0 0 8px 8px;
+  }
+  .chatbot-hidden {
+    display: none;
+  }
+  #chat-messages {
+    height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  #chat-input {
+    width: 75%;
+    padding: 5px;
+  }
+  #send-btn {
+    width: 20%;
+    padding: 5px;
+  }
+</style>
+
+<script>
+  const header = document.getElementById('chatbot-header');
+  const body = document.getElementById('chatbot-body');
+  const messages = document.getElementById('chat-messages');
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  header.addEventListener('click', () => {
+    body.classList.toggle('chatbot-hidden');
+  });
+
+  sendBtn.addEventListener('click', async () => {
+    const question = input.value.trim();
+    if (!question) return;
+    messages.innerHTML += `<div><b>You:</b> ${question}</div>`;
+    input.value = '';
+    
+    const res = await fetch('/bot', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ question })
+    });
+
+    const data = await res.json();
+    messages.innerHTML += `<div><b>Bot:</b> ${data.answer}</div>`;
+    messages.scrollTop = messages.scrollHeight;
+  });
+</script>
