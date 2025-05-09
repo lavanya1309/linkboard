@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
 
-// In-memory user store (for demo purposes)
+// In-memory user store (temporary)
 const users = [];
 
 app.set('view engine', 'ejs');
@@ -21,45 +21,42 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-// Auth middleware
+// Middleware to check if user is authenticated
 function isAuthenticated(req, res, next) {
   if (req.session.user) return next();
   res.redirect('/login');
 }
 
-// Routes
+// ROUTES
+
+// Home - requires login
 app.get('/', isAuthenticated, (req, res) => {
-  res.render('index');
+  res.render('index', { email: req.session.user });
 });
 
+// Signup - form
 app.get('/signup', (req, res) => {
   res.render('signup');
 });
 
+// Signup - logic
 app.post('/signup', async (req, res) => {
-  const { email, password, confirmPassword } = req.body;
-
-  // Check if passwords match
-  if (password !== confirmPassword) {
-    return res.send('Passwords do not match. Please <a href="/signup">try again</a>.');
-  }
-
-  // Check if user already exists
+  const { email, password } = req.body;
   const exists = users.find(u => u.email === email);
   if (exists) {
     return res.send('User already exists. Please <a href="/login">login</a>.');
   }
-
-  // Store hashed password
   const hashedPassword = await bcrypt.hash(password, 10);
   users.push({ email, password: hashedPassword });
   res.redirect('/login');
 });
 
+// Login - form
 app.get('/login', (req, res) => {
   res.render('login');
 });
 
+// Login - logic
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = users.find(u => u.email === email);
@@ -71,17 +68,19 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Logout
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/login');
   });
 });
 
+// Room route
 app.get('/room/:roomId', isAuthenticated, (req, res) => {
   res.render('room', { roomId: req.params.roomId });
 });
 
-// Socket.IO
+// Socket.IO for video conferencing
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
     socket.join(roomId);
@@ -93,6 +92,7 @@ io.on('connection', socket => {
   });
 });
 
+// Start server
 server.listen(3000, '0.0.0.0', () => {
   console.log('Server is running on http://0.0.0.0:3000');
 });
