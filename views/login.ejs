@@ -21,6 +21,7 @@
       border-radius: 12px;
       width: 350px;
       border: 2px solid #007bff; /* Border for the container */
+      position: relative;
     }
     .app-name {
       font-size: 32px;
@@ -66,8 +67,55 @@
       text-align: center;
       margin-top: 10px;
     }
-    .app-name, .form-container h2, .form-container input, .form-container button {
-      transition: all 0.3s ease;
+
+    /* Chatbot Styles */
+    #chatbox {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      height: 400px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    #chat-area {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    #user-input {
+      width: 100%;
+      padding: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button.chat-button {
+      padding: 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button.chat-button:hover {
+      background-color: #0056b3;
+    }
+    .user-message, .bot-message {
+      margin: 10px 0;
+    }
+    .user-message {
+      text-align: left;
+      color: #4CAF50;
+    }
+    .bot-message {
+      text-align: right;
+      color: #007bff;
     }
   </style>
 </head>
@@ -85,5 +133,39 @@
     <% } %>
     <p>Don't have an account? <a href="/signup">Sign up</a></p>
   </div>
+
+  <!-- Chatbot UI -->
+  <div id="chatbox">
+    <div id="chat-area"></div>
+    <input type="text" id="user-input" placeholder="Type your message..." />
+    <button class="chat-button" onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    // Function to send user message and get response
+    async function sendMessage() {
+      const userMessage = document.getElementById('user-input').value;
+
+      if (userMessage.trim() === "") return; // Don't send empty messages
+
+      // Display the user's message
+      document.getElementById('chat-area').innerHTML += `<div class="user-message">${userMessage}</div>`;
+
+      // Call the server-side endpoint for chatbot response
+      const response = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage })
+      });
+
+      const data = await response.json();
+
+      // Display the bot's response
+      document.getElementById('chat-area').innerHTML += `<div class="bot-message">${data.response}</div>`;
+
+      // Clear the input field
+      document.getElementById('user-input').value = '';
+    }
+  </script>
 </body>
 </html>
