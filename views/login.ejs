@@ -5,7 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - LinkBoard</title>
   <style>
-    /* Your existing styles */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 18px;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -26,9 +44,5 @@
   <% } %>
 
   <p>Don't have an account? <a href="/signup">Sign Up</a></p>
-
-  <!-- Include the chatbot on the login page -->
-  <%- include('chatbot') %>
-
 </body>
 </html>
