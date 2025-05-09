@@ -6,6 +6,7 @@ const app = express();
 
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());  // For parsing JSON requests
 
 // Session middleware
 app.use(session({
@@ -80,6 +81,30 @@ app.get('/logout', (req, res) => {
     res.clearCookie('connect.sid');
     res.redirect('/login');
   });
+});
+
+// Route for Chatbot (Chat interaction)
+app.get('/chatbot', isAuthenticated, (req, res) => {
+  res.render('chatbot', { email: req.session.user });
+});
+
+// Chatbot response route (Simple rule-based chatbot)
+app.post('/chat', (req, res) => {
+  const userMessage = req.body.message.toLowerCase();
+  let botResponse = '';
+
+  // Simple rule-based responses
+  if (userMessage.includes('hello')) {
+    botResponse = 'Hello! How can I assist you today?';
+  } else if (userMessage.includes('bye')) {
+    botResponse = 'Goodbye! Have a great day!';
+  } else if (userMessage.includes('help')) {
+    botResponse = 'Sure! How can I help you? You can ask me about the application or meetings.';
+  } else {
+    botResponse = 'Sorry, I didn\'t understand that. Can you rephrase?';
+  }
+
+  res.json({ response: botResponse });
 });
 
 // Start server
