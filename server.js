@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
 
-// In-memory user store (for demo purposes; use a DB in production)
+// In-memory user store (for demo purposes)
 const users = [];
 
 app.set('view engine', 'ejs');
@@ -21,7 +21,7 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-// Middleware to check if user is logged in
+// Auth middleware
 function isAuthenticated(req, res, next) {
   if (req.session.user) return next();
   res.redirect('/login');
@@ -37,11 +37,20 @@ app.get('/signup', (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, confirmPassword } = req.body;
+
+  // Check if passwords match
+  if (password !== confirmPassword) {
+    return res.send('Passwords do not match. Please <a href="/signup">try again</a>.');
+  }
+
+  // Check if user already exists
   const exists = users.find(u => u.email === email);
   if (exists) {
     return res.send('User already exists. Please <a href="/login">login</a>.');
   }
+
+  // Store hashed password
   const hashedPassword = await bcrypt.hash(password, 10);
   users.push({ email, password: hashedPassword });
   res.redirect('/login');
@@ -55,7 +64,7 @@ app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = users.find(u => u.email === email);
   if (user && await bcrypt.compare(password, user.password)) {
-    req.session.user = email; // Store email in session
+    req.session.user = email;
     res.redirect('/');
   } else {
     res.send('Invalid email or password. Please <a href="/login">try again</a>.');
@@ -72,7 +81,7 @@ app.get('/room/:roomId', isAuthenticated, (req, res) => {
   res.render('room', { roomId: req.params.roomId });
 });
 
-// Socket.IO logic (for real-time communication)
+// Socket.IO
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
     socket.join(roomId);
