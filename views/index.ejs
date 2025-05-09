@@ -1,44 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>LinkBoard - Create or Join Meeting</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to LinkBoard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 50px;
+      padding-top: 50px;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      margin: 10px;
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 18px;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>Welcome to LinkBoard</h1>
-  <p>Enter a room ID to join a meeting or create a new meeting</p>
-  <button onclick="createMeeting()">Create Meeting</button>
-  <button onclick="joinMeeting()">Join Meeting</button>
-
-  <script>
-    function createMeeting() {
-      const roomId = generateRoomId();
-      window.location.href = `/room/${roomId}`;
-    }
-
-    function joinMeeting() {
-      const roomId = prompt("Enter Room ID:");
-      if (roomId) {
-        window.location.href = `/room/${roomId}`;
-      }
-    }
-
-    function generateRoomId() {
-      return Math.random().toString(36).substr(2, 8); // Random 8-character room ID
-    }
-  </script>
+  <h1>Welcome, <%= email %>!</h1>
+  <p>You are logged in.</p>
+  <p><a href="/logout">Logout</a></p>
 </body>
 </html>
