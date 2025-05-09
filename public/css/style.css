@@ -1,40 +1,41 @@
-/* General Styles */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+/* General reset */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-h1, h2 {
-  color: #333;
+/* Body styles */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
 }
 
-/* Login Page */
 .login-container {
   display: flex;
-  height: 100vh;
+  max-width: 1000px;
+  width: 100%;
 }
 
 .login-left {
-  width: 50%;
-  background-color: #1d2671;
-}
-
-.login-left .login-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  flex: 1;
+  background: url('https://via.placeholder.com/600x800?text=LinkBoard+App') no-repeat center center fixed;
+  background-size: cover;
 }
 
 .login-right {
-  width: 50%;
+  flex: 1;
+  background-color: white;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
-  padding: 20px;
 }
 
 .app-name {
@@ -43,79 +44,51 @@ h1, h2 {
   margin-bottom: 30px;
 }
 
-.login-form {
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+}
+
+.auth-form {
   display: flex;
   flex-direction: column;
-  width: 80%;
   gap: 15px;
 }
 
-.login-form input {
-  padding: 10px;
-  font-size: 1rem;
+.auth-form input {
   width: 100%;
-  border-radius: 5px;
+  padding: 12px;
   border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.login-button {
+.auth-button {
+  padding: 12px;
   background-color: #1d2671;
   color: white;
   border: none;
-  padding: 15px;
-  font-size: 1.2rem;
-  cursor: pointer;
   border-radius: 5px;
-}
-
-.login-button:hover {
-  background-color: #0f1a47;
-}
-
-/* Room Page Styles */
-.room-header {
-  display: flex;
-  justify-content: space-between;
-  background-color: #1d2671;
-  color: white;
-  padding: 15px;
-}
-
-.user-actions a {
-  color: white;
-  text-decoration: none;
-  margin: 0 15px;
+  cursor: pointer;
   font-size: 1.1rem;
 }
 
-.user-actions a:hover {
+.switch-auth {
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.switch-auth a {
+  color: #1d2671;
+  text-decoration: none;
+}
+
+.switch-auth a:hover {
   text-decoration: underline;
 }
 
-#video-grid {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.meeting-actions {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.action-button {
-  background-color: #1d2671;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.action-button:hover {
-  background-color: #0f1a47;
+.login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
