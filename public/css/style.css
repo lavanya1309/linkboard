@@ -1,8 +1,14 @@
-body {
+/* General reset */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styles */
+body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #1d2671, #c33764);
-  color: #fff;
+  background-color: #f4f4f4;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,11 +16,79 @@ body {
   text-align: center;
 }
 
-.container {
-  max-width: 400px;
+.login-container {
+  display: flex;
+  max-width: 1000px;
+  width: 100%;
 }
 
-h1 {
+.login-left {
+  flex: 1;
+  background: url('https://via.placeholder.com/600x800?text=LinkBoard+App') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.login-right {
+  flex: 1;
+  background-color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.app-name {
   font-size: 3rem;
-  margin-bottom: 10px;
+  color: #1d2671;
+  margin-bottom: 30px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.auth-button {
+  padding: 12px;
+  background-color: #1d2671;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.switch-auth {
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.switch-auth a {
+  color: #1d2671;
+  text-decoration: none;
+}
+
+.switch-auth a:hover {
+  text-decoration: underline;
+}
+
+.login-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
