@@ -84,21 +84,36 @@ app.get('/logout', (req, res) => {
 });
 
 // Chatbot response route (Simple rule-based chatbot)
+let conversationState = {};
+
 app.post('/chat', (req, res) => {
   const userMessage = req.body.message.toLowerCase();
+  const sessionId = req.body.sessionId;
+
   let botResponse = '';
 
-  // Simple rule-based responses
-  if (userMessage.includes('hello')) {
-    botResponse = 'Hello! How can I assist you today?';
-  } else if (userMessage.includes('bye')) {
-    botResponse = 'Goodbye! Have a great day!';
-  } else if (userMessage.includes('help')) {
-    botResponse = 'Sure! How can I help you? You can ask me about the application or meetings.';
-  } else if (userMessage.includes('logout')) {
-    botResponse = 'You are logged out. Starting fresh chat now.';
+  // Start a new conversation or continue the conversation
+  if (!conversationState[sessionId]) {
+    conversationState[sessionId] = { step: 0 }; // Initialize conversation step
+  }
+
+  const currentStep = conversationState[sessionId].step;
+
+  if (currentStep === 0) {
+    botResponse = 'Hi! How can I assist you today?';
+    conversationState[sessionId].step = 1; // Move to the next step
+  } else if (currentStep === 1 && userMessage.includes('hi')) {
+    botResponse = 'What is your good name?';
+    conversationState[sessionId].step = 2; // Move to the next step
+  } else if (currentStep === 2 && userMessage) {
+    conversationState[sessionId].name = userMessage;
+    botResponse = `Hi ${userMessage}, can you send your email ID?`;
+    conversationState[sessionId].step = 3; // Move to the next step
+  } else if (currentStep === 3 && userMessage) {
+    botResponse = 'Thank you for providing your email. How can I assist you further?';
+    conversationState[sessionId].step = 0; // Reset conversation
   } else {
-    botResponse = 'Sorry, I didn\'t understand that. Can you rephrase?';
+    botResponse = 'Sorry, I didn\'t understand that. Can you please rephrase?';
   }
 
   res.json({ response: botResponse });
