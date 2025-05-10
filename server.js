@@ -95,6 +95,8 @@ app.post('/chat', (req, res) => {
     botResponse = 'Goodbye! Have a great day!';
   } else if (userMessage.includes('help')) {
     botResponse = 'Sure! How can I help you? You can ask me about the application or meetings.';
+  } else if (userMessage.includes('logout')) {
+    botResponse = 'You are logged out. Starting fresh chat now.';
   } else {
     botResponse = 'Sorry, I didn\'t understand that. Can you rephrase?';
   }
