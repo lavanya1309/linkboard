@@ -118,6 +118,26 @@
       overflow-y: auto;
     }
 
+    .chatbot-message {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 70%;
+    }
+
+    .chatbot-message.bot {
+      background-color: #f1f1f1;
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    .chatbot-message.user {
+      background-color: #007bff;
+      color: white;
+      margin-right: 0;
+      margin-left: auto;
+    }
+
     .chatbot-input {
       padding: 10px;
       border-top: 1px solid #ccc;
@@ -210,7 +230,8 @@
       // Send the user's message
       if (userMessage) {
         const userMessageElement = document.createElement("div");
-        userMessageElement.textContent = "You: " + userMessage;
+        userMessageElement.classList.add("chatbot-message", "user");
+        userMessageElement.textContent = userMessage;
         chatbotMessages.appendChild(userMessageElement);
       } else {
         userMessage = messageInput.value;
@@ -224,7 +245,8 @@
       });
       const data = await response.json();
       const botMessageElement = document.createElement("div");
-      botMessageElement.textContent = "Bot: " + data.response;
+      botMessageElement.classList.add("chatbot-message", "bot");
+      botMessageElement.textContent = data.response;
       chatbotMessages.appendChild(botMessageElement);
 
       // Scroll to the bottom of the chat window
