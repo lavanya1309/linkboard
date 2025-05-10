@@ -145,6 +145,20 @@
     .chatbot-input button:hover {
       background-color: #0056b3;
     }
+
+    .logout-button {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .logout-button:hover {
+      background-color: #cc0000;
+    }
   </style>
 </head>
 <body>
@@ -175,6 +189,7 @@
       <input type="text" id="user-message" placeholder="Type a message..." />
       <button onclick="sendMessage()">Send</button>
     </div>
+    <button id="logout-button" class="logout-button" onclick="logout()">Logout</button>
   </div>
 
   <script>
@@ -211,6 +226,16 @@
       });
 
       document.getElementById("user-message").value = ""; // Clear input field
+    }
+
+    function logout() {
+      fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'logout' })
+      });
+      document.getElementById("chatbot-messages").innerHTML = ''; // Clear chat
+      toggleChatbot(); // Close the chatbot window
     }
   </script>
 </body>
