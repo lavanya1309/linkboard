@@ -12,29 +12,29 @@
       align-items: center;
       height: 100vh;
       margin: 0;
-      background-color: #f0f4f8; /* Light background color */
+      background-color: #f0f4f8;
       position: relative;
     }
     .form-container {
-      background-color: #ffffff; /* White background for form container */
+      background-color: #ffffff;
       padding: 40px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
       width: 350px;
-      border: 2px solid #007bff; /* Border for the container */
+      border: 2px solid #007bff;
     }
     .app-name {
       font-size: 32px;
       text-align: center;
       font-weight: bold;
-      color: #3498db; /* Application name color (blue) */
+      color: #3498db;
       margin-bottom: 20px;
     }
     .form-container h2 {
       text-align: center;
       margin-bottom: 20px;
       font-size: 24px;
-      color: #333333; /* Sign-in text color */
+      color: #333333;
     }
     .form-container input {
       width: 100%;
@@ -43,10 +43,10 @@
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 16px;
-      outline: none; /* Removed outline */
+      outline: none;
     }
     .form-container input:focus {
-      border-color: #007bff; /* Highlight border color on focus */
+      border-color: #007bff;
     }
     .form-container button {
       width: 100%;
@@ -186,56 +186,59 @@
     <div class="chatbot-header">Chatbot</div>
     <div id="chatbot-messages" class="chatbot-messages"></div>
     <div class="chatbot-input">
-      <input type="text" id="user-message" placeholder="Type a message..." />
-      <button onclick="sendMessage()">Send</button>
+      <input type="text" id="user-message" placeholder="Type your message..." />
+      <button id="send-message" onclick="sendMessage()">Send</button>
     </div>
-    <button id="logout-button" class="logout-button" onclick="logout()">Logout</button>
+    <button class="logout-button" onclick="logout()">Logout</button>
   </div>
 
   <script>
+    let sessionId = new Date().getTime(); // Generate unique session ID based on timestamp
+
     function toggleChatbot() {
       const chatbot = document.getElementById("chatbot");
-      chatbot.style.display = (chatbot.style.display === "none" || chatbot.style.display === "") ? "flex" : "none";
+      chatbot.style.display = chatbot.style.display === "none" ? "flex" : "none";
+      if (chatbot.style.display === "flex") {
+        sendMessage("Hi! How can I assist you today?");
+      }
     }
 
-    function sendMessage() {
-      const userMessage = document.getElementById("user-message").value;
-      if (userMessage.trim() === "") return; // Don't send empty messages
-      const messagesContainer = document.getElementById("chatbot-messages");
+    async function sendMessage(userMessage = "") {
+      const messageInput = document.getElementById("user-message");
+      const chatbotMessages = document.getElementById("chatbot-messages");
 
-      // Add user's message
-      const userMessageDiv = document.createElement("div");
-      userMessageDiv.textContent = `You: ${userMessage}`;
-      messagesContainer.appendChild(userMessageDiv);
+      // Send the user's message
+      if (userMessage) {
+        const userMessageElement = document.createElement("div");
+        userMessageElement.textContent = "You: " + userMessage;
+        chatbotMessages.appendChild(userMessageElement);
+      } else {
+        userMessage = messageInput.value;
+      }
 
-      // Send the message to the server
-      fetch('/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: userMessage }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Add bot's response
-        const botMessageDiv = document.createElement("div");
-        botMessageDiv.textContent = `Bot: ${data.response}`;
-        messagesContainer.appendChild(botMessageDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
+      // Send request to server to get the bot's response
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage, sessionId })
       });
+      const data = await response.json();
+      const botMessageElement = document.createElement("div");
+      botMessageElement.textContent = "Bot: " + data.response;
+      chatbotMessages.appendChild(botMessageElement);
 
-      document.getElementById("user-message").value = ""; // Clear input field
+      // Scroll to the bottom of the chat window
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+      // Clear input field
+      messageInput.value = "";
     }
 
     function logout() {
-      fetch('/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'logout' })
-      });
-      document.getElementById("chatbot-messages").innerHTML = ''; // Clear chat
-      toggleChatbot(); // Close the chatbot window
+      sessionId = new Date().getTime(); // Reset session on logout
+      const chatbotMessages = document.getElementById("chatbot-messages");
+      chatbotMessages.innerHTML = ''; // Clear chat history
+      sendMessage("Hi! How can I assist you today?"); // Restart the bot
     }
   </script>
 </body>
