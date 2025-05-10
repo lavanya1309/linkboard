@@ -1,85 +1,126 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const session = require('express-session');
-const path = require('path');
+const bodyParser = require('body-parser');
 const app = express();
 
 // Body parser middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());  // For parsing JSON requests
 
 // Session middleware
 app.use(session({
-  secret: 'your_secret_key',
+  secret: 'linkboard_secret_key', // You should change this to a more secure key in production
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // set to true if using HTTPS
+  saveUninitialized: false,
 }));
 
-// Static files
-app.use(express.static(path.join(__dirname, 'public')));
+// In-memory "database" for simplicity (replace with real database in production)
+let users = [];
 
-// Sample user data
-const users = [
-  { email: 'soma@example.com', password: 'password123' }
-];
+// View Engine
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
-// Simulated chatbot responses
-const chatbotResponses = {
-  "hi": "Hello! How can I assist you today?",
-  "what is your good name": "What is your good name?",
-  "soma": "Hi Soma, can you send your email id?",
-  "default": "Sorry, I didn't understand that. Can you please rephrase?"
-};
+// Middleware to check if the user is authenticated
+function isAuthenticated(req, res, next) {
+  if (req.session.user) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
-// Serve the login page
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'login.ejs'));
+// Route for Home page (only accessible after login)
+app.get('/', isAuthenticated, (req, res) => {
+  res.render('index', { email: req.session.user });
 });
 
-// Handle login form submission
-app.post('/login', (req, res) => {
+// Route for Login page
+app.get('/login', (req, res) => {
+  res.render('login', { errorMessage: null });
+});
+
+// Route for Login form submission
+app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const user = users.find(u => u.email === email && u.password === password);
-  if (user) {
-    req.session.user = user;
-    return res.redirect('/dashboard');
+  const user = users.find(u => u.email === email);
+
+  if (user && await bcrypt.compare(password, user.password)) {
+    req.session.user = email; // Store user info in session
+    res.redirect('/');  // Redirect to home page
   } else {
-    return res.render('login.ejs', { errorMessage: 'Invalid email or password!' });
+    res.render('login', { errorMessage: 'Invalid email or password. Please try again.' });
   }
 });
 
-// Serve the dashboard page after successful login
-app.get('/dashboard', (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/');
-  }
-  res.sendFile(path.join(__dirname, 'dashboard.html')); // Change to your actual dashboard file
+// Route for Signup page
+app.get('/signup', (req, res) => {
+  res.render('signup', { errorMessage: null });
 });
 
-// Handle the chatbot message requests
+// Route for Signup form submission
+app.post('/signup', async (req, res) => {
+  const { email, password } = req.body;
+  const userExists = users.find(u => u.email === email);
+
+  if (userExists) {
+    res.render('signup', { errorMessage: 'Email already exists. Please choose another one.' });
+  } else {
+    const hashedPassword = await bcrypt.hash(password, 10);  // Hash the password
+    users.push({ email, password: hashedPassword }); // Store the user in the "database"
+    res.redirect('/login');  // Redirect to login page after successful signup
+  }
+});
+
+// Route for Logout
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.redirect('/');
+    }
+    res.clearCookie('connect.sid');
+    res.redirect('/login');
+  });
+});
+
+// Chatbot response route (Simple rule-based chatbot)
+let conversationState = {};
+
 app.post('/chat', (req, res) => {
   const userMessage = req.body.message.toLowerCase();
   const sessionId = req.body.sessionId;
 
-  // Choose a response based on the user's message
-  let response = chatbotResponses[userMessage] || chatbotResponses['default'];
+  let botResponse = '';
 
-  // Send the response back to the client
-  res.json({ response: response });
+  // Start a new conversation or continue the conversation
+  if (!conversationState[sessionId]) {
+    conversationState[sessionId] = { step: 0 }; // Initialize conversation step
+  }
+
+  const currentStep = conversationState[sessionId].step;
+
+  if (currentStep === 0) {
+    botResponse = 'Hi! How can I assist you today?';
+    conversationState[sessionId].step = 1; // Move to the next step
+  } else if (currentStep === 1 && userMessage.includes('hi')) {
+    botResponse = 'What is your good name?';
+    conversationState[sessionId].step = 2; // Move to the next step
+  } else if (currentStep === 2 && userMessage) {
+    conversationState[sessionId].name = userMessage;
+    botResponse = `Hi ${userMessage}, can you send your email ID?`;
+    conversationState[sessionId].step = 3; // Move to the next step
+  } else if (currentStep === 3 && userMessage) {
+    botResponse = 'Thank you for providing your email. How can I assist you further?';
+    conversationState[sessionId].step = 0; // Reset conversation
+  } else {
+    botResponse = 'Sorry, I didn\'t understand that. Can you please rephrase?';
+  }
+
+  res.json({ response: botResponse });
 });
 
-// Handle logout
-app.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.redirect('/dashboard');
-    }
-    res.redirect('/');
-  });
-});
-
-// Start the server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Start server
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
