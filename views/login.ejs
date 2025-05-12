@@ -3,187 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <title>Login - LinkBoard</title>
-  <link rel="stylesheet" href="/styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: url('/background.jpg') no-repeat center center fixed;
+      background: url('https://images.unsplash.com/photo-1525186402429-b4ff38bedec6') no-repeat center center fixed;
       background-size: cover;
-      margin: 0;
-      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    .container {
-      max-width: 400px;
-      margin: 80px auto;
-      background: rgba(255, 255, 255, 0.9);
+    .login-container {
+      background-color: rgba(255, 255, 255, 0.9);
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      box-shadow: 0 0 10px #000;
+      width: 350px;
+    }
+
+    h2 {
       text-align: center;
+      margin-bottom: 20px;
     }
 
-    h1 {
-      margin-bottom: 10px;
-      font-size: 28px;
-    }
-
-    form input {
-      width: 90%;
-      padding: 12px;
-      margin: 10px 0;
+    input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 6px;
     }
 
     button {
-      padding: 12px 25px;
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
       border: none;
-      background-color: #007BFF;
       color: white;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
     }
 
     .error {
       color: red;
-      margin-top: 10px;
-    }
-
-    .chatbot-icon {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background-color: #007BFF;
-      color: white;
-      border-radius: 50%;
-      padding: 16px;
-      font-size: 20px;
-      cursor: pointer;
-      z-index: 1000;
-    }
-
-    .chatbot-window {
-      position: fixed;
-      bottom: 90px;
-      right: 30px;
-      width: 300px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.3);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .chat-header {
-      background-color: #007BFF;
-      color: white;
-      padding: 10px;
       text-align: center;
     }
 
-    .chat-body {
-      flex: 1;
+    .chatbot {
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
+    }
+
+    .chat-output {
+      background: #f1f1f1;
       padding: 10px;
-      max-height: 250px;
+      border-radius: 5px;
+      height: 100px;
       overflow-y: auto;
+      margin-bottom: 10px;
     }
 
     .chat-input {
       display: flex;
-      border-top: 1px solid #ccc;
     }
 
     .chat-input input {
       flex: 1;
-      padding: 10px;
-      border: none;
-      outline: none;
+      padding: 8px;
+      border-radius: 5px 0 0 5px;
+      border: 1px solid #ccc;
+      border-right: none;
     }
 
     .chat-input button {
-      padding: 10px;
-      border: none;
-      background-color: #007BFF;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      background-color: #28a745;
       color: white;
+      border-radius: 0 5px 5px 0;
       cursor: pointer;
-    }
-
-    .chat-message {
-      margin-bottom: 10px;
-    }
-
-    .chat-message.user {
-      text-align: right;
-    }
-
-    .chat-message.bot {
-      text-align: left;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Login to LinkBoard</h1>
-    <form action="/login" method="POST">
-      <input type="email" name="email" placeholder="Email" required /><br>
-      <input type="password" name="password" placeholder="Password" required /><br>
+  <div class="login-container">
+    <h2>Login to LinkBoard</h2>
+    <% if (errorMessage) { %>
+      <div class="error"><%= errorMessage %></div>
+    <% } %>
+    <form method="POST" action="/login">
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
       <button type="submit">Login</button>
     </form>
-    <p>Don't have an account? <a href="/signup">Sign up here</a></p>
-    <% if (errorMessage) { %>
-      <p class="error"><%= errorMessage %></p>
-    <% } %>
-  </div>
 
-  <!-- Chatbot Icon -->
-  <div class="chatbot-icon" onclick="toggleChatbot()">🤖</div>
-
-  <!-- Chatbot Window -->
-  <div class="chatbot-window" id="chatbotWindow">
-    <div class="chat-header">ChatBot</div>
-    <div class="chat-body" id="chatBody"></div>
-    <div class="chat-input">
-      <input type="text" id="userInput" placeholder="Type a message...">
-      <button onclick="sendMessage()">Send</button>
+    <div class="chatbot">
+      <div class="chat-output" id="chatOutput">Ask me anything...</div>
+      <div class="chat-input">
+        <input type="text" id="chatMessage" placeholder="Type a message" />
+        <button onclick="sendMessage()">Send</button>
+      </div>
     </div>
   </div>
 
   <script>
-    function toggleChatbot() {
-      const chatbotWindow = document.getElementById('chatbotWindow');
-      chatbotWindow.style.display = chatbotWindow.style.display === 'flex' ? 'none' : 'flex';
-    }
-
     async function sendMessage() {
-      const input = document.getElementById('userInput');
-      const message = input.value.trim();
-      if (!message) return;
+      const input = document.getElementById('chatMessage');
+      const output = document.getElementById('chatOutput');
+      const message = input.value;
 
-      const chatBody = document.getElementById('chatBody');
-      const userMsg = document.createElement('div');
-      userMsg.className = 'chat-message user';
-      userMsg.textContent = message;
-      chatBody.appendChild(userMsg);
-      chatBody.scrollTop = chatBody.scrollHeight;
+      if (!message.trim()) return;
 
-      input.value = '';
+      output.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
 
       const response = await fetch('/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ message })
       });
 
       const data = await response.json();
-      const botMsg = document.createElement('div');
-      botMsg.className = 'chat-message bot';
-      botMsg.textContent = data.response;
-      chatBody.appendChild(botMsg);
-      chatBody.scrollTop = chatBody.scrollHeight;
+      output.innerHTML += `<div><strong>Bot:</strong> ${data.response}</div>`;
+      output.scrollTop = output.scrollHeight;
+      input.value = '';
     }
   </script>
 </body>
