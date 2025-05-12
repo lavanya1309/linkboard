@@ -2,215 +2,188 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - LinkBoard</title>
+  <link rel="stylesheet" href="/styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background: url('/background.jpg') no-repeat center center fixed;
+      background-size: cover;
       margin: 0;
-      background-color: #f0f4f8; /* Light background color */
-      position: relative;
+      padding: 0;
     }
-    .form-container {
-      background-color: #ffffff; /* White background for form container */
-      padding: 40px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      width: 350px;
-      border: 2px solid #007bff; /* Border for the container */
-    }
-    .app-name {
-      font-size: 32px;
+
+    .container {
+      max-width: 400px;
+      margin: 80px auto;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
       text-align: center;
-      font-weight: bold;
-      color: #3498db; /* Application name color (blue) */
-      margin-bottom: 20px;
     }
-    .form-container h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 24px;
-      color: #333333; /* Sign-in text color */
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 28px;
     }
-    .form-container input {
-      width: 100%;
+
+    form input {
+      width: 90%;
       padding: 12px;
-      margin: 12px 0;
+      margin: 10px 0;
       border: 1px solid #ccc;
       border-radius: 6px;
-      font-size: 16px;
-      outline: none; /* Removed outline */
     }
-    .form-container input:focus {
-      border-color: #007bff; /* Highlight border color on focus */
-    }
-    .form-container button {
-      width: 100%;
-      padding: 12px;
-      background-color: #007bff;
-      color: white;
+
+    button {
+      padding: 12px 25px;
       border: none;
+      background-color: #007BFF;
+      color: white;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 16px;
-    }
-    .form-container button:hover {
-      background-color: #0056b3;
-    }
-    .error-message {
-      color: #ff0000;
-      font-size: 14px;
-      text-align: center;
+      font-weight: bold;
       margin-top: 10px;
     }
 
-    /* Chatbot icon */
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+
     .chatbot-icon {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 60px;
-      height: 60px;
-      background-color: #007bff;
+      bottom: 30px;
+      right: 30px;
+      background-color: #007BFF;
       color: white;
       border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 16px;
+      font-size: 20px;
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    }
-    .chatbot-icon:hover {
-      background-color: #0056b3;
+      z-index: 1000;
     }
 
-    /* Chatbot window */
-    .chatbot-container {
+    .chatbot-window {
       position: fixed;
-      bottom: 100px;
-      right: 20px;
-      width: 350px;
-      height: 400px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      bottom: 90px;
+      right: 30px;
+      width: 300px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
       display: none;
       flex-direction: column;
+      overflow: hidden;
     }
 
-    .chatbot-header {
-      background-color: #007bff;
+    .chat-header {
+      background-color: #007BFF;
       color: white;
       padding: 10px;
-      font-size: 18px;
       text-align: center;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
     }
 
-    .chatbot-messages {
+    .chat-body {
       flex: 1;
       padding: 10px;
+      max-height: 250px;
       overflow-y: auto;
     }
 
-    .chatbot-input {
-      padding: 10px;
-      border-top: 1px solid #ccc;
+    .chat-input {
       display: flex;
+      border-top: 1px solid #ccc;
     }
 
-    .chatbot-input input {
+    .chat-input input {
       flex: 1;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
+      padding: 10px;
+      border: none;
+      outline: none;
     }
 
-    .chatbot-input button {
-      background-color: #007bff;
-      color: white;
+    .chat-input button {
+      padding: 10px;
       border: none;
-      border-radius: 6px;
-      padding: 8px 12px;
-      margin-left: 10px;
+      background-color: #007BFF;
+      color: white;
       cursor: pointer;
     }
 
-    .chatbot-input button:hover {
-      background-color: #0056b3;
+    .chat-message {
+      margin-bottom: 10px;
+    }
+
+    .chat-message.user {
+      text-align: right;
+    }
+
+    .chat-message.bot {
+      text-align: left;
     }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <div class="app-name">LinkBoard</div>
-    <h2>Sign In</h2>
+  <div class="container">
+    <h1>Login to LinkBoard</h1>
     <form action="/login" method="POST">
-      <input type="text" name="email" placeholder="Email Address" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Sign In</button>
+      <input type="email" name="email" placeholder="Email" required /><br>
+      <input type="password" name="password" placeholder="Password" required /><br>
+      <button type="submit">Login</button>
     </form>
+    <p>Don't have an account? <a href="/signup">Sign up here</a></p>
     <% if (errorMessage) { %>
-      <div class="error-message"><%= errorMessage %></div>
+      <p class="error"><%= errorMessage %></p>
     <% } %>
-    <p>Don't have an account? <a href="/signup">Sign up</a></p>
   </div>
 
-  <!-- Chatbot icon -->
-  <div class="chatbot-icon" onclick="toggleChatbot()">
-    🤖
-  </div>
+  <!-- Chatbot Icon -->
+  <div class="chatbot-icon" onclick="toggleChatbot()">🤖</div>
 
-  <!-- Chatbot window -->
-  <div id="chatbot" class="chatbot-container">
-    <div class="chatbot-header">Chatbot</div>
-    <div id="chatbot-messages" class="chatbot-messages"></div>
-    <div class="chatbot-input">
-      <input type="text" id="user-message" placeholder="Type a message..." />
+  <!-- Chatbot Window -->
+  <div class="chatbot-window" id="chatbotWindow">
+    <div class="chat-header">ChatBot</div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Type a message...">
       <button onclick="sendMessage()">Send</button>
     </div>
   </div>
 
   <script>
     function toggleChatbot() {
-      const chatbot = document.getElementById("chatbot");
-      chatbot.style.display = (chatbot.style.display === "none" || chatbot.style.display === "") ? "flex" : "none";
+      const chatbotWindow = document.getElementById('chatbotWindow');
+      chatbotWindow.style.display = chatbotWindow.style.display === 'flex' ? 'none' : 'flex';
     }
 
-    function sendMessage() {
-      const userMessage = document.getElementById("user-message").value;
-      if (userMessage.trim() === "") return; // Don't send empty messages
-      const messagesContainer = document.getElementById("chatbot-messages");
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const message = input.value.trim();
+      if (!message) return;
 
-      // Add user's message
-      const userMessageDiv = document.createElement("div");
-      userMessageDiv.textContent = `You: ${userMessage}`;
-      messagesContainer.appendChild(userMessageDiv);
+      const chatBody = document.getElementById('chatBody');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-message user';
+      userMsg.textContent = message;
+      chatBody.appendChild(userMsg);
+      chatBody.scrollTop = chatBody.scrollHeight;
 
-      // Send the message to the server
-      fetch('/chat', {
+      input.value = '';
+
+      const response = await fetch('/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: userMessage }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Add bot's response
-        const botMessageDiv = document.createElement("div");
-        botMessageDiv.textContent = `Bot: ${data.response}`;
-        messagesContainer.appendChild(botMessageDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
       });
 
-      document.getElementById("user-message").value = ""; // Clear input field
+      const data = await response.json();
+      const botMsg = document.createElement('div');
+      botMsg.className = 'chat-message bot';
+      botMsg.textContent = data.response;
+      chatBody.appendChild(botMsg);
+      chatBody.scrollTop = chatBody.scrollHeight;
     }
   </script>
 </body>
