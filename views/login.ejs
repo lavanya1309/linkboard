@@ -1,135 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - LinkBoard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: url('https://images.unsplash.com/photo-1525186402429-b4ff38bedec6') no-repeat center center fixed;
-      background-size: cover;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
+      background-color: #f0f4f8;
     }
-
-    .login-container {
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #000;
+    .form-container {
+      background-color: #fff;
+      padding: 40px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      border-radius: 12px;
       width: 350px;
+      border: 2px solid #007bff;
     }
-
+    .app-name {
+      font-size: 32px;
+      text-align: center;
+      font-weight: bold;
+      color: #3498db;
+      margin-bottom: 20px;
+    }
     h2 {
       text-align: center;
       margin-bottom: 20px;
+      color: #333;
     }
-
-    input[type="email"], input[type="password"] {
+    input {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 5px;
+      padding: 12px;
+      margin: 12px 0;
       border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
     }
-
+    input:focus {
+      border-color: #007bff;
+    }
     button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       background-color: #007bff;
-      border: none;
       color: white;
-      border-radius: 5px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
-
-    .error {
+    button:hover {
+      background-color: #0056b3;
+    }
+    .error-message {
       color: red;
+      font-size: 14px;
       text-align: center;
     }
 
-    .chatbot {
-      margin-top: 20px;
-      border-top: 1px solid #ddd;
-      padding-top: 15px;
-    }
-
-    .chat-output {
-      background: #f1f1f1;
-      padding: 10px;
-      border-radius: 5px;
-      height: 100px;
-      overflow-y: auto;
-      margin-bottom: 10px;
-    }
-
-    .chat-input {
+    /* Chatbot styling */
+    .chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 50%;
       display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
-
-    .chat-input input {
+    .chatbot-container {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 350px;
+      height: 400px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+    }
+    .chatbot-header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .chatbot-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    .chatbot-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+    }
+    .chatbot-input input {
       flex: 1;
       padding: 8px;
-      border-radius: 5px 0 0 5px;
       border: 1px solid #ccc;
-      border-right: none;
+      border-radius: 6px;
     }
-
-    .chat-input button {
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      background-color: #28a745;
+    .chatbot-input button {
+      margin-left: 10px;
+      background-color: #007bff;
       color: white;
-      border-radius: 0 5px 5px 0;
-      cursor: pointer;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Login to LinkBoard</h2>
-    <% if (errorMessage) { %>
-      <div class="error"><%= errorMessage %></div>
-    <% } %>
-    <form method="POST" action="/login">
-      <input type="email" name="email" placeholder="Email" required />
+  <div class="form-container">
+    <div class="app-name">LinkBoard</div>
+    <h2>Sign In</h2>
+    <form action="/login" method="POST">
+      <input type="text" name="email" placeholder="Email Address" required />
       <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Login</button>
+      <button type="submit">Sign In</button>
     </form>
+    <% if (errorMessage) { %>
+      <div class="error-message"><%= errorMessage %></div>
+    <% } %>
+    <p>Don't have an account? <a href="/signup">Sign up</a></p>
+  </div>
 
-    <div class="chatbot">
-      <div class="chat-output" id="chatOutput">Ask me anything...</div>
-      <div class="chat-input">
-        <input type="text" id="chatMessage" placeholder="Type a message" />
-        <button onclick="sendMessage()">Send</button>
-      </div>
+  <div class="chatbot-icon" onclick="toggleChatbot()">🤖</div>
+  <div id="chatbot" class="chatbot-container">
+    <div class="chatbot-header">Chatbot</div>
+    <div id="chatbot-messages" class="chatbot-messages"></div>
+    <div class="chatbot-input">
+      <input type="text" id="user-message" placeholder="Type a message..." />
+      <button onclick="sendMessage()">Send</button>
     </div>
   </div>
 
   <script>
-    async function sendMessage() {
-      const input = document.getElementById('chatMessage');
-      const output = document.getElementById('chatOutput');
-      const message = input.value;
+    function toggleChatbot() {
+      const chatbot = document.getElementById("chatbot");
+      chatbot.style.display = chatbot.style.display === "flex" ? "none" : "flex";
+    }
 
-      if (!message.trim()) return;
+    function sendMessage() {
+      const userMessage = document.getElementById("user-message").value.trim();
+      if (!userMessage) return;
 
-      output.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+      const messagesContainer = document.getElementById("chatbot-messages");
+      const userDiv = document.createElement("div");
+      userDiv.textContent = `You: ${userMessage}`;
+      messagesContainer.appendChild(userDiv);
 
-      const response = await fetch('/chat', {
+      fetch('/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ message })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const botDiv = document.createElement("div");
+        botDiv.textContent = `Bot: ${data.response}`;
+        messagesContainer.appendChild(botDiv);
+        document.getElementById("user-message").value = "";
       });
-
-      const data = await response.json();
-      output.innerHTML += `<div><strong>Bot:</strong> ${data.response}</div>`;
-      output.scrollTop = output.scrollHeight;
-      input.value = '';
     }
   </script>
 </body>
