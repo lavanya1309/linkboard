@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 // Session middleware
 app.use(session({
-  secret: 'linkboard_secret_key', // Change to a secure value in production
+  secret: 'linkboard_secret_key',
   resave: false,
   saveUninitialized: false,
 }));
@@ -21,9 +21,8 @@ let users = [];
 // View Engine
 app.set('view engine', 'ejs');
 app.set('views', './views');
-app.use(express.static('public')); // For serving static files (if needed)
 
-// Middleware to check authentication
+// Middleware to check if the user is authenticated
 function isAuthenticated(req, res, next) {
   if (req.session.user) {
     return next();
@@ -31,17 +30,17 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-// Home page (after login)
+// Route for Home page
 app.get('/', isAuthenticated, (req, res) => {
   res.render('index', { email: req.session.user });
 });
 
-// Login page
+// Route for Login page
 app.get('/login', (req, res) => {
   res.render('login', { errorMessage: null });
 });
 
-// Login handler
+// Route for Login form submission
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = users.find(u => u.email === email);
@@ -54,12 +53,12 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Signup page
+// Route for Signup page
 app.get('/signup', (req, res) => {
   res.render('signup', { errorMessage: null });
 });
 
-// Signup handler
+// Route for Signup form submission
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
   const userExists = users.find(u => u.email === email);
@@ -73,16 +72,18 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-// Logout route
+// Route for Logout
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
-    if (err) return res.redirect('/');
+    if (err) {
+      return res.redirect('/');
+    }
     res.clearCookie('connect.sid');
     res.redirect('/login');
   });
 });
 
-// Chatbot handler
+// Chatbot response route
 app.post('/chat', (req, res) => {
   const userMessage = req.body.message.toLowerCase();
   let botResponse = '';
@@ -92,7 +93,7 @@ app.post('/chat', (req, res) => {
   } else if (userMessage.includes('bye')) {
     botResponse = 'Goodbye! Have a great day!';
   } else if (userMessage.includes('help')) {
-    botResponse = 'Sure! You can ask me about the application or meetings.';
+    botResponse = 'Sure! How can I help you? You can ask me about the application or meetings.';
   } else {
     botResponse = "Sorry, I didn't understand that. Can you rephrase?";
   }
