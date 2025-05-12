@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to LinkBoard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding-top: 50px;
-      background-color: #f0f4f8;
+      position: relative;
     }
     h1 {
       font-size: 36px;
-      color: #333;
+      margin-bottom: 20px;
     }
     p {
       font-size: 18px;
@@ -25,11 +25,186 @@
     a:hover {
       text-decoration: underline;
     }
+
+    /* Chatbot styles (same across all pages) */
+    .chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    .chatbot-icon:hover {
+      background-color: #0056b3;
+    }
+    .chatbot-container {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 350px;
+      height: 500px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+    }
+    .chatbot-header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chatbot-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      word-wrap: break-word;
+    }
+    .bot-message {
+      align-self: flex-start;
+      background-color: #f1f1f1;
+      border-bottom-left-radius: 4px;
+    }
+    .user-message {
+      align-self: flex-end;
+      background-color: #007bff;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .chatbot-input {
+      padding: 10px;
+      border-top: 1px solid #ccc;
+      display: flex;
+    }
+    .chatbot-input input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .chatbot-input button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    .chatbot-input button:hover {
+      background-color: #0056b3;
+    }
+    .logout-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .logout-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
   </style>
 </head>
 <body>
   <h1>Welcome, <%= email %>!</h1>
   <p>You are logged in.</p>
   <p><a href="/logout">Logout</a></p>
+
+  <!-- Chatbot icon -->
+  <div class="chatbot-icon" onclick="toggleChatbot()">
+    🤖
+  </div>
+
+  <!-- Chatbot window -->
+  <div id="chatbot" class="chatbot-container">
+    <div class="chatbot-header">
+      <span>Chatbot</span>
+      <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+    <div id="chatbot-messages" class="chatbot-messages"></div>
+    <div class="chatbot-input">
+      <input type="text" id="user-message" placeholder="Type a message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleChatbot() {
+      const chatbot = document.getElementById("chatbot");
+      chatbot.style.display = (chatbot.style.display === "none" || chatbot.style.display === "") ? "flex" : "none";
+    }
+
+    function sendMessage() {
+      const userMessage = document.getElementById("user-message").value;
+      if (userMessage.trim() === "") return;
+      const messagesContainer = document.getElementById("chatbot-messages");
+
+      // Add user's message
+      const userMessageDiv = document.createElement("div");
+      userMessageDiv.className = "message user-message";
+      userMessageDiv.textContent = userMessage;
+      messagesContainer.appendChild(userMessageDiv);
+
+      // Send to server
+      fetch('/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Add bot's response
+        const botMessageDiv = document.createElement("div");
+        botMessageDiv.className = "message bot-message";
+        botMessageDiv.textContent = data.response;
+        messagesContainer.appendChild(botMessageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      });
+
+      document.getElementById("user-message").value = "";
+    }
+
+    function handleLogout() {
+      window.location.href = '/logout';
+    }
+
+    // Allow sending message with Enter key
+    document.getElementById('user-message').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
 </body>
 </html>
